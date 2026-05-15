@@ -74,6 +74,10 @@ app.get('/api/health', (req, res) => {
 });
 
 // ─── Serve Frontend Pages ───────────────────────────
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'healthcare-booking.html'));
+});
+
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
 });
