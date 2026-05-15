@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login – MediCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#f7f6f2;--white:#fff;--navy:#1a2e44;--teal:#2a9d8f;--teal-light:#e8f5f3;--accent:#e76f51;--muted:#8a9ab0;--border:#e2e5ea;--text:#2b3a4d;--radius:14px;--transition:.25s cubic-bezier(.4,0,.2,1)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .auth-container{width:100%;max-width:440px;animation:fadeUp .5s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .auth-card{background:var(--white);border-radius:var(--radius);padding:44px 36px;box-shadow:0 2px 40px rgba(26,46,68,.08)}
+    .logo{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;color:var(--navy);text-align:center;margin-bottom:8px}
+    .logo span{color:var(--teal)}
+    .logo-icon{width:42px;height:42px;background:var(--teal);border-radius:50%;display:inline-grid;place-items:center;color:#fff;font-size:1.1rem;margin-bottom:12px}
+    .auth-title{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--navy);text-align:center;margin-bottom:6px}
+    .auth-sub{color:var(--muted);font-size:.88rem;text-align:center;margin-bottom:32px}
+    .tab-bar{display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:28px}
+    .tab{flex:1;padding:10px;text-align:center;border-radius:8px;font-size:.88rem;font-weight:500;cursor:pointer;transition:all var(--transition);color:var(--muted)}
+    .tab.active{background:var(--white);color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .form-group{margin-bottom:18px}
+    .form-group label{display:block;font-size:.83rem;font-weight:600;color:var(--navy);margin-bottom:7px}
+    .form-group input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--white);transition:border-color var(--transition),box-shadow var(--transition);outline:none}
+    .form-group input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.12)}
+    .form-group input.error{border-color:#e63946}
+    .error-msg{font-size:.75rem;color:#e63946;margin-top:5px;display:none}
+    .error-msg.visible{display:block}
+    .btn-auth{width:100%;padding:14px;background:var(--teal);color:#fff;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all var(--transition);margin-top:8px;position:relative;overflow:hidden}
+    .btn-auth:hover{background:#238a7d;transform:translateY(-1px);box-shadow:0 6px 20px rgba(42,157,143,.3)}
+    .btn-auth:disabled{opacity:.7;cursor:not-allowed;transform:none}
+    .btn-auth .spinner{display:none;width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+    .btn-auth.loading .btn-text{display:none}
+    .btn-auth.loading .spinner{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .divider{display:flex;align-items:center;gap:12px;margin:24px 0;color:var(--muted);font-size:.82rem}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    .auth-link{text-align:center;font-size:.88rem;color:var(--muted);margin-top:20px}
+    .auth-link a{color:var(--teal);font-weight:600;text-decoration:none}
+    .auth-link a:hover{text-decoration:underline}
+    .forgot-link{text-align:right;margin-top:-10px;margin-bottom:18px}
+    .forgot-link a{font-size:.82rem;color:var(--teal);text-decoration:none}
+    .toast{position:fixed;bottom:30px;right:30px;background:var(--navy);color:#fff;padding:16px 22px;border-radius:12px;font-size:.9rem;box-shadow:0 8px 30px rgba(0,0,0,.2);transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:340px}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.error{background:#e63946}
+    .toast.success{background:#1a7a34}
+    .back-home{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.85rem;text-decoration:none;margin-bottom:20px;transition:color var(--transition)}
+    .back-home:hover{color:var(--teal)}
+  </style>
+</head>
+<body>
+<div class="auth-container">
+  <a href="healthcare-booking.html" class="back-home">← Back to MediCare</a>
+  <div class="auth-card">
+    <div style="text-align:center"><div class="logo-icon">✦</div></div>
+    <div class="logo">Medi<span>Care</span></div>
+    <h1 class="auth-title">Welcome Back</h1>
+    <p class="auth-sub">Sign in to manage your appointments</p>
+
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('patient')">Patient</div>
+      <div class="tab" onclick="switchTab('doctor')">Doctor</div>
+      <div class="tab" onclick="switchTab('admin')">Admin</div>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" placeholder="your@email.com" required/>
+        <div class="error-msg" id="emailErr">Please enter a valid email</div>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required/>
+        <div class="error-msg" id="passErr">Password is required</div>
+      </div>
+      <div class="forgot-link">
+        <a href="#" onclick="showForgotPassword()">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn-auth" id="loginBtn">
+        <span class="btn-text">Sign In</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <div class="auth-link" id="registerLink">
+      Don't have an account? <a href="register.html">Sign Up</a>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = 'http://localhost:5002';
+let loginRole = 'patient';
+
+function switchTab(role) {
+  loginRole = role;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('registerLink').style.display = role === 'admin' ? 'none' : 'block';
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!email || !password) {
+    showToast('Please fill in all fields', 'error');
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const endpoint = loginRole === 'doctor' ? '/api/auth/doctor-login' : '/api/auth/login';
+    const res = await fetch(API_BASE + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      localStorage.setItem('medicare_token', data.data.token);
+      localStorage.setItem('medicare_user', JSON.stringify(data.data));
+      showToast('Login successful! Redirecting...', 'success');
+
+      setTimeout(() => {
+        if (data.data.role === 'admin') window.location.href = 'admin-dashboard.html';
+        else if (data.data.role === 'doctor') window.location.href = 'doctor-dashboard.html';
+        else window.location.href = 'patient-dashboard.html';
+      }, 1000);
+    } else {
+      showToast(data.message || 'Login failed', 'error');
+    }
+  } catch (err) {
+    console.error('Login fetch error:', err);
+    if (err.message === "Failed to fetch") {
+      showToast('Cannot reach the server. Check if backend is running on port 5002.', 'error');
+    } else {
+      showToast('Cannot reach the server. Check if backend is running on port 5002.', 'error');
+    }
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+function showForgotPassword() {
+  const email = prompt('Enter your registered email:');
+  if (email) {
+    fetch(API_BASE + '/api/auth/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    }).then(r => r.json()).then(data => {
+      showToast(data.message, data.success ? 'success' : 'error');
+    }).catch(() => showToast('Server error', 'error'));
+  }
+}
+
+function showToast(msg, type = '') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// Check if already logged in
+const token = localStorage.getItem('medicare_token');
+if (token) {
+  const user = JSON.parse(localStorage.getItem('medicare_user') || '{}');
+  if (user.role === 'admin') window.location.href = 'admin-dashboard.html';
+  else if (user.role === 'doctor') window.location.href = 'doctor-dashboard.html';
+  else window.location.href = 'patient-dashboard.html';
+}
+</script>
+</body>
+</html>

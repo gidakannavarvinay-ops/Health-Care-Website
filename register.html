@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register – MediCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#f7f6f2;--white:#fff;--navy:#1a2e44;--teal:#2a9d8f;--teal-light:#e8f5f3;--accent:#e76f51;--muted:#8a9ab0;--border:#e2e5ea;--text:#2b3a4d;--radius:14px;--transition:.25s cubic-bezier(.4,0,.2,1)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .auth-container{width:100%;max-width:480px;animation:fadeUp .5s ease}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .auth-card{background:var(--white);border-radius:var(--radius);padding:40px 36px;box-shadow:0 2px 40px rgba(26,46,68,.08)}
+    .logo{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;color:var(--navy);text-align:center;margin-bottom:8px}
+    .logo span{color:var(--teal)}
+    .logo-icon{width:42px;height:42px;background:var(--teal);border-radius:50%;display:inline-grid;place-items:center;color:#fff;font-size:1.1rem;margin-bottom:12px}
+    .auth-title{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--navy);text-align:center;margin-bottom:6px}
+    .auth-sub{color:var(--muted);font-size:.88rem;text-align:center;margin-bottom:28px}
+    .tab-bar{display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:24px}
+    .tab{flex:1;padding:10px;text-align:center;border-radius:8px;font-size:.88rem;font-weight:500;cursor:pointer;transition:all var(--transition);color:var(--muted)}
+    .tab.active{background:var(--white);color:var(--navy);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:.83rem;font-weight:600;color:var(--navy);margin-bottom:7px}
+    .form-group input,.form-group select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.9rem;color:var(--text);background:var(--white);transition:border-color var(--transition),box-shadow var(--transition);outline:none}
+    .form-group input:focus,.form-group select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,157,143,.12)}
+    .btn-auth{width:100%;padding:14px;background:var(--teal);color:#fff;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:all var(--transition);margin-top:8px;position:relative}
+    .btn-auth:hover{background:#238a7d;transform:translateY(-1px);box-shadow:0 6px 20px rgba(42,157,143,.3)}
+    .btn-auth:disabled{opacity:.7;cursor:not-allowed;transform:none}
+    .btn-auth .spinner{display:none;width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto}
+    .btn-auth.loading .btn-text{display:none}
+    .btn-auth.loading .spinner{display:block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .auth-link{text-align:center;font-size:.88rem;color:var(--muted);margin-top:20px}
+    .auth-link a{color:var(--teal);font-weight:600;text-decoration:none}
+    .doctor-fields{display:none}
+    .doctor-fields.show{display:block}
+    .toast{position:fixed;bottom:30px;right:30px;background:var(--navy);color:#fff;padding:16px 22px;border-radius:12px;font-size:.9rem;box-shadow:0 8px 30px rgba(0,0,0,.2);transform:translateY(100px);opacity:0;transition:all .4s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:340px}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.error{background:#e63946}
+    .toast.success{background:#1a7a34}
+    .back-home{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:.85rem;text-decoration:none;margin-bottom:20px;transition:color var(--transition)}
+    .back-home:hover{color:var(--teal)}
+    @media(max-width:500px){.form-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="auth-container">
+  <a href="healthcare-booking.html" class="back-home">← Back to MediCare</a>
+  <div class="auth-card">
+    <div style="text-align:center"><div class="logo-icon">✦</div></div>
+    <div class="logo">Medi<span>Care</span></div>
+    <h1 class="auth-title">Create Account</h1>
+    <p class="auth-sub">Join MediCare for seamless healthcare booking</p>
+
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchRegTab('patient')">Patient</div>
+      <div class="tab" onclick="switchRegTab('doctor')">Doctor</div>
+    </div>
+
+    <form id="registerForm" onsubmit="handleRegister(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" placeholder="Your full name" required/>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone *</label>
+          <input type="tel" id="phone" placeholder="9876543210" required/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <input type="email" id="email" placeholder="your@email.com" required/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="password">Password *</label>
+          <input type="password" id="password" placeholder="Min 6 characters" required minlength="6"/>
+        </div>
+        <div class="form-group">
+          <label for="confirmPass">Confirm Password *</label>
+          <input type="password" id="confirmPass" placeholder="Re-enter password" required/>
+        </div>
+      </div>
+
+      <div class="doctor-fields" id="doctorFields">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="specialty">Specialty *</label>
+            <select id="specialty">
+              <option value="">Select</option>
+              <option>Cardiology</option><option>Neurology</option><option>Dermatology</option>
+              <option>Orthopedics</option><option>Pediatrics</option><option>Ophthalmology</option>
+              <option>Psychiatry</option><option>General Medicine</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="experience">Experience (years) *</label>
+            <input type="number" id="experience" placeholder="5" min="0"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fee">Consultation Fee (₹) *</label>
+            <input type="number" id="fee" placeholder="800" min="0"/>
+          </div>
+          <div class="form-group">
+            <label for="hospital">Hospital</label>
+            <input type="text" id="hospital" placeholder="Hospital name"/>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-auth" id="regBtn">
+        <span class="btn-text">Create Account</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+    <div class="auth-link">Already have an account? <a href="login.html">Sign In</a></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = 'http://localhost:5002';
+let regRole = 'patient';
+
+function switchRegTab(role) {
+  regRole = role;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('doctorFields').classList.toggle('show', role === 'doctor');
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const btn = document.getElementById('regBtn');
+  const password = document.getElementById('password').value;
+  const confirmPass = document.getElementById('confirmPass').value;
+
+  if (password !== confirmPass) {
+    showToast('Passwords do not match', 'error');
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    let endpoint, body;
+    if (regRole === 'doctor') {
+      endpoint = '/api/auth/doctor-register';
+      body = {
+        doctorName: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        password,
+        specialty: document.getElementById('specialty').value,
+        experience: parseInt(document.getElementById('experience').value),
+        consultationFee: parseInt(document.getElementById('fee').value),
+        hospital: document.getElementById('hospital').value
+      };
+    } else {
+      endpoint = '/api/auth/register';
+      body = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        password
+      };
+    }
+
+    const res = await fetch(API_BASE + endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      showToast(data.message, 'success');
+      if (data.data.token) {
+        localStorage.setItem('medicare_token', data.data.token);
+        localStorage.setItem('medicare_user', JSON.stringify(data.data));
+        setTimeout(() => window.location.href = 'patient-dashboard.html', 1500);
+      } else {
+        setTimeout(() => window.location.href = 'login.html', 2000);
+      }
+    } else {
+      showToast(data.message, 'error');
+    }
+  } catch (err) {
+    if (err.message === "Failed to fetch") {
+      showToast('Cannot reach the server. Check if backend is running on port 5002.', 'error');
+    } else {
+      showToast('Cannot reach the server. Check if backend is running on port 5002.', 'error');
+    }
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+function showToast(msg, type = '') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+</script>
+</body>
+</html>

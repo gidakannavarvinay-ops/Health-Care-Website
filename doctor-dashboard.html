@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor Dashboard – MediCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#f7f6f2;--white:#fff;--navy:#1a2e44;--teal:#2a9d8f;--teal-light:#e8f5f3;--muted:#8a9ab0;--border:#e2e5ea;--text:#2b3a4d;--radius:14px;--transition:.25s cubic-bezier(.4,0,.2,1)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
+    .dash-header{background:var(--white);border-bottom:1px solid var(--border);padding:0 5%;position:sticky;top:0;z-index:50}
+    .dash-nav{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+    .logo{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:600;color:var(--navy)}
+    .logo span{color:var(--teal)}
+    .dash-nav-links{display:flex;gap:20px;align-items:center}
+    .dash-nav-links a{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color var(--transition)}
+    .dash-nav-links a:hover{color:var(--teal)}
+    .user-badge{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--teal-light);border-radius:50px;font-size:.85rem;color:var(--teal);font-weight:500}
+    .container{max-width:1200px;margin:0 auto;padding:28px 5%}
+    .welcome-banner{background:linear-gradient(135deg,#1a2e44,#2a3f5a);border-radius:var(--radius);padding:32px;color:#fff;margin-bottom:28px}
+    .welcome-banner h1{font-family:'Fraunces',serif;font-size:1.5rem;margin-bottom:6px}
+    .welcome-banner p{opacity:.7;font-size:.9rem}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+    .mini-stat{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:0 2px 12px rgba(26,46,68,.05);text-align:center}
+    .mini-stat .num{font-family:'Fraunces',serif;font-size:1.6rem;color:var(--teal);margin-bottom:4px}
+    .mini-stat p{font-size:.82rem;color:var(--muted)}
+    .card{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:0 2px 12px rgba(26,46,68,.05);margin-bottom:20px}
+    .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .card-header h2{font-family:'Fraunces',serif;font-size:1.1rem;color:var(--navy)}
+    .appt-card{display:flex;align-items:center;gap:16px;padding:16px;border-radius:10px;background:var(--bg);margin-bottom:10px}
+    .appt-icon{width:46px;height:46px;border-radius:12px;background:var(--teal-light);color:var(--teal);display:grid;place-items:center;font-size:1.3rem;flex-shrink:0}
+    .appt-info{flex:1}
+    .appt-info h4{font-size:.92rem;color:var(--navy);margin-bottom:2px}
+    .appt-info p{font-size:.8rem;color:var(--muted)}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;border:none;transition:all var(--transition)}
+    .btn-success{background:#d4edda;color:#1a7a34}
+    .btn-success:hover{background:#1a7a34;color:#fff}
+    .btn-danger{background:#fce4ec;color:#c0392b}
+    .btn-danger:hover{background:#c0392b;color:#fff}
+    .badge{padding:4px 10px;border-radius:50px;font-size:.72rem;font-weight:600}
+    .badge-green{background:#d4edda;color:#1a7a34}
+    .badge-orange{background:#ffe5d9;color:#c0432a}
+    .badge-blue{background:#d6eaf8;color:#1a5276}
+    .empty-state{text-align:center;padding:40px;color:var(--muted)}
+    .empty-state .icon{font-size:2.5rem;margin-bottom:10px}
+    .toast{position:fixed;bottom:30px;right:30px;background:var(--navy);color:#fff;padding:16px 22px;border-radius:12px;font-size:.9rem;box-shadow:0 8px 30px rgba(0,0,0,.2);transform:translateY(100px);opacity:0;transition:all .4s;z-index:999}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.success{background:#1a7a34}
+    .toast.error{background:#e63946}
+    @media(max-width:768px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:500px){.grid-4{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header class="dash-header">
+  <nav class="dash-nav">
+    <div class="logo">✦ Medi<span>Care</span></div>
+    <div class="dash-nav-links">
+      <a href="healthcare-booking.html">Home</a>
+      <div class="user-badge" id="userBadge">🩺 Doctor</div>
+      <a href="#" onclick="logout()" style="color:#e63946">Logout</a>
+    </div>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="welcome-banner">
+    <h1 id="welcomeMsg">Welcome, Doctor!</h1>
+    <p>Here's your schedule and appointment overview</p>
+  </div>
+
+  <div class="grid-4">
+    <div class="mini-stat"><div class="num" id="todayCount">0</div><p>Today's Appointments</p></div>
+    <div class="mini-stat"><div class="num" id="totalAppts">0</div><p>Total Appointments</p></div>
+    <div class="mini-stat"><div class="num" id="completedCount">0</div><p>Completed</p></div>
+    <div class="mini-stat"><div class="num" id="earnings">₹0</div><p>Total Earnings</p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>📅 Today's Schedule</h2></div>
+    <div id="todayList"><div class="empty-state"><div class="icon">📋</div><p>Loading...</p></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>📋 Recent Appointments</h2></div>
+    <div id="recentList"><div class="empty-state"><div class="icon">📋</div><p>Loading...</p></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:5002';
+const token = localStorage.getItem('medicare_token');
+const user = JSON.parse(localStorage.getItem('medicare_user') || '{}');
+
+if (!token || user.role !== 'doctor') { window.location.href = 'login.html'; }
+
+document.getElementById('welcomeMsg').textContent = 'Welcome, ' + (user.doctorName || 'Doctor') + '!';
+document.getElementById('userBadge').textContent = '🩺 ' + (user.doctorName || 'Doctor');
+
+const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+
+async function loadDashboard() {
+  try {
+    const res = await fetch(API + '/api/doctors/' + user._id + '/dashboard', { headers });
+    const data = await res.json();
+    if (!data.success) return;
+
+    const d = data.data;
+    document.getElementById('todayCount').textContent = d.todayAppointments.length;
+    document.getElementById('totalAppts').textContent = d.totalAppointments;
+    document.getElementById('completedCount').textContent = d.completedAppointments;
+    document.getElementById('earnings').textContent = '₹' + (d.totalEarnings || 0).toLocaleString('en-IN');
+
+    const renderAppts = (appts, targetId, showActions) => {
+      const el = document.getElementById(targetId);
+      if (!appts || appts.length === 0) {
+        el.innerHTML = '<div class="empty-state"><div class="icon">📅</div><p>No appointments</p></div>';
+        return;
+      }
+      const statusBadge = s => s === 'completed' ? 'badge-green' : s === 'pending' ? 'badge-orange' : 'badge-blue';
+      el.innerHTML = appts.map(a => `
+        <div class="appt-card">
+          <div class="appt-icon">👤</div>
+          <div class="appt-info">
+            <h4>${a.patientName}</h4>
+            <p>${new Date(a.appointmentDate).toLocaleDateString('en-IN')} at ${a.appointmentTime} · ${a.symptoms || 'No symptoms noted'}</p>
+          </div>
+          <span class="badge ${statusBadge(a.status)}">${a.status}</span>
+          ${showActions && a.status !== 'completed' && a.status !== 'cancelled' ? `
+            <button class="btn btn-success" onclick="markComplete('${a._id}')">✓ Complete</button>
+            <button class="btn btn-danger" onclick="cancelAppt('${a._id}')">✕</button>
+          ` : ''}
+        </div>
+      `).join('');
+    };
+
+    renderAppts(d.todayAppointments, 'todayList', true);
+    renderAppts(d.recentAppointments, 'recentList', true);
+  } catch(e) { showToast('Error loading dashboard', 'error'); }
+}
+
+async function markComplete(id) {
+  const res = await fetch(API + '/api/appointments/' + id + '/complete', { method: 'PUT', headers });
+  const data = await res.json();
+  showToast(data.message, data.success ? 'success' : 'error');
+  loadDashboard();
+}
+
+async function cancelAppt(id) {
+  if (!confirm('Cancel this appointment?')) return;
+  await fetch(API + '/api/appointments/' + id + '/cancel', { method: 'PUT', headers, body: JSON.stringify({ reason: 'Cancelled by doctor' }) });
+  showToast('Appointment cancelled', 'success');
+  loadDashboard();
+}
+
+function logout() { localStorage.removeItem('medicare_token'); localStorage.removeItem('medicare_user'); window.location.href = 'login.html'; }
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast'); t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+loadDashboard();
+</script>
+</body>
+</html>

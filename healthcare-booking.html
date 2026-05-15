@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MediCare – Healthcare Appointment Booking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    /* ─── CSS Variables ─────────────────────────────── */
+    :root {
+      --bg: #f7f6f2;
+      --white: #ffffff;
+      --navy: #1a2e44;
+      --teal: #2a9d8f;
+      --teal-light: #e8f5f3;
+      --accent: #e76f51;
+      --muted: #8a9ab0;
+      --border: #e2e5ea;
+      --text: #2b3a4d;
+      --card-shadow: 0 2px 20px rgba(26,46,68,0.07);
+      --radius: 14px;
+      --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ─── Reset & Base ──────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    ul { list-style: none; }
+
+    /* ─── Header / Nav ──────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(247,246,242,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%;
+    }
+    nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+    .logo {
+      font-family: 'Fraunces', serif;
+      font-size: 1.55rem;
+      font-weight: 600;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo span {
+      color: var(--teal);
+    }
+    .logo-icon {
+      width: 34px; height: 34px;
+      background: var(--teal);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 1rem;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+    }
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color var(--transition);
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0;
+      width: 0; height: 2px;
+      background: var(--teal);
+      transition: width var(--transition);
+      border-radius: 2px;
+    }
+    .nav-links a:hover { color: var(--navy); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active { color: var(--navy); }
+    .nav-links a.active::after { width: 100%; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: none;
+    }
+    .btn-primary {
+      background: var(--teal);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #238a7d;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(42,157,143,0.3);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--navy);
+    }
+    .btn-outline:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 6px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--navy);
+      border-radius: 2px;
+      transition: all var(--transition);
+    }
+
+    /* ─── Hero ──────────────────────────────────────── */
+    .hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 80px 5% 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--teal-light);
+      color: var(--teal);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 50px;
+      margin-bottom: 24px;
+    }
+    .hero-tag::before {
+      content: '';
+      width: 7px; height: 7px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.5; transform:scale(1.4); }
+    }
+    .hero h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--navy);
+      margin-bottom: 20px;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--teal);
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 36px;
+      max-width: 460px;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hero-visual {
+      position: relative;
+    }
+    .hero-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--card-shadow);
+      animation: floatUp 0.7s ease both;
+    }
+    @keyframes floatUp {
+      from { opacity:0; transform:translateY(30px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .hero-card-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 50px;
+    }
+    .badge-green { background: #d4edda; color: #1a7a34; }
+    .badge-orange { background: #ffe5d9; color: #c0432a; }
+    .doctor-list { display: flex; flex-direction: column; gap: 14px; }
+    .doctor-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--bg);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .doctor-item:hover { background: var(--teal-light); }
+    .doctor-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .doctor-info { flex: 1; }
+    .doctor-info strong { display: block; font-size: 0.9rem; color: var(--navy); }
+    .doctor-info span { font-size: 0.78rem; color: var(--muted); }
+    .doctor-slots { font-size: 0.78rem; color: var(--teal); font-weight: 600; }
+
+    /* ─── Stats Bar ─────────────────────────────────── */
+    .stats-bar {
+      background: var(--navy);
+      padding: 30px 5%;
+    }
+    .stats-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      text-align: center;
+    }
+    .stat-item h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      color: var(--teal);
+      font-weight: 600;
+    }
+    .stat-item p { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+    /* ─── Section Shared ────────────────────────────── */
+    section { padding: 80px 5%; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 14px;
+    }
+    .section-sub {
+      color: var(--muted);
+      max-width: 520px;
+      margin-bottom: 48px;
+    }
+
+    /* ─── Specialties ───────────────────────────────── */
+    #specialties { background: var(--white); }
+    .specialties-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+    .specialty-card {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      border: 1.5px solid transparent;
+    }
+    .specialty-card:hover, .specialty-card.active {
+      background: var(--teal-light);
+      border-color: var(--teal);
+      transform: translateY(-3px);
+    }
+    .specialty-icon { font-size: 2rem; margin-bottom: 10px; }
+    .specialty-card h4 { font-size: 0.9rem; font-weight: 600; color: var(--navy); }
+    .specialty-card p { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+    /* ─── Doctors ───────────────────────────────────── */
+    #doctors { background: var(--bg); }
+    .doctors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .doc-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .doc-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(26,46,68,0.12);
+    }
+    .doc-card-top {
+      background: linear-gradient(135deg, var(--teal-light), #d0ece9);
+      padding: 28px;
+      text-align: center;
+      position: relative;
+    }
+    .doc-avatar-lg {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 2.2rem;
+      background: white;
+      margin: 0 auto 14px;
+      box-shadow: 0 4px 15px rgba(42,157,143,0.2);
+    }
+    .doc-card-top h3 { font-size: 1rem; font-weight: 600; color: var(--navy); }
+    .doc-card-top p { font-size: 0.82rem; color: var(--teal); font-weight: 500; margin-top: 2px; }
+    .doc-card-body { padding: 20px; }
+    .doc-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .doc-meta-item { text-align: center; }
+    .doc-meta-item strong { display: block; font-size: 1rem; color: var(--navy); }
+    .doc-meta-item span { font-size: 0.75rem; color: var(--muted); }
+    .doc-rating { display: flex; align-items: center; gap: 4px; margin-bottom: 16px; }
+    .stars { color: #f4a21c; font-size: 0.85rem; }
+    .doc-rating span { font-size: 0.82rem; color: var(--muted); }
+    .btn-book {
+      width: 100%;
+      background: var(--teal);
+      color: white;
+      border: none;
+      padding: 11px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .btn-book:hover {
+      background: #238a7d;
+      transform: translateY(-1px);
+    }
+
+    /* ─── Booking Form ──────────────────────────────── */
+    #book { background: var(--white); }
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .booking-info h2 { margin-bottom: 16px; }
+    .booking-steps { margin-top: 36px; display: flex; flex-direction: column; gap: 20px; }
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--teal-light);
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .step-content strong { display: block; color: var(--navy); font-size: 0.95rem; }
+    .step-content span { font-size: 0.83rem; color: var(--muted); }
+
+    /* Form */
+    .booking-form {
+      background: var(--bg);
+      border-radius: var(--radius);
+      padding: 36px;
+    }
+    .booking-form h3 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      color: var(--navy);
+      margin-bottom: 24px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block;
+      font-size: 0.83rem;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 7px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: var(--white);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(42,157,143,0.12);
+    }
+    .form-group input.error,
+    .form-group select.error { border-color: #e63946; }
+    .error-msg {
+      font-size: 0.75rem;
+      color: #e63946;
+      margin-top: 5px;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .form-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 9px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition);
+      margin-top: 6px;
+    }
+    .form-submit:hover {
+      background: #238a7d;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(42,157,143,0.3);
+    }
+
+    /* ─── Success Toast ──────────────────────────────── */
+    .toast {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      background: var(--navy);
+      color: white;
+      padding: 16px 22px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 999;
+      max-width: 340px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 1.3rem; }
+    .toast strong { display: block; margin-bottom: 2px; }
+    .toast span { font-size: 0.78rem; color: rgba(255,255,255,0.7); }
+
+    /* ─── Testimonials ──────────────────────────────── */
+    #testimonials { background: var(--bg); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .testimonial-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+    }
+    .testimonial-card::before {
+      content: '"';
+      font-family: 'Fraunces', serif;
+      font-size: 4rem;
+      color: var(--teal-light);
+      position: absolute;
+      top: 10px; left: 20px;
+      line-height: 1;
+    }
+    .testimonial-text {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      padding-top: 20px;
+    }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+    .author-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--teal-light);
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+    }
+    .author-info strong { display: block; font-size: 0.88rem; color: var(--navy); }
+    .author-info span { font-size: 0.78rem; color: var(--muted); }
+
+    /* ─── Footer ────────────────────────────────────── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.7);
+      padding: 60px 5% 30px;
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 50px;
+    }
+    .footer-brand .logo { color: white; margin-bottom: 14px; }
+    .footer-brand p { font-size: 0.85rem; line-height: 1.7; max-width: 260px; }
+    .footer-col h4 { color: white; font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 0.85rem; transition: color var(--transition); }
+    .footer-col ul li a:hover { color: var(--teal); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+    }
+
+    /* ─── Modal ─────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26,46,68,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: white;
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 440px;
+      width: 90%;
+      transform: scale(0.9) translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      text-align: center;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-icon { font-size: 3rem; margin-bottom: 16px; }
+    .modal h2 { font-family: 'Fraunces', serif; color: var(--navy); margin-bottom: 10px; }
+    .modal p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 24px; }
+    .modal-close {
+      padding: 12px 32px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .modal-close:hover { background: #238a7d; }
+
+    /* ─── Scroll to Top ─────────────────────────────── */
+    .scroll-top {
+      position: fixed;
+      bottom: 30px; left: 30px;
+      width: 44px; height: 44px;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(42,157,143,0.3);
+      transition: all var(--transition);
+      opacity: 0;
+      transform: translateY(20px);
+      z-index: 99;
+    }
+    .scroll-top.visible { opacity: 1; transform: translateY(0); }
+    .scroll-top:hover { background: #238a7d; transform: translateY(-3px); }
+
+    /* ─── Responsive ────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 40px; }
+      .hero-visual { order: -1; }
+      .booking-layout { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); }
+      .nav-links { display: none; flex-direction: column; position: absolute; top: 68px; left: 0; right: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 20px 5%; gap: 20px; }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+    }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─────────────────────────────────────── -->
+<header>
+  <nav>
+    <div class="logo">
+      <div class="logo-icon">✦</div>
+      Medi<span>Care</span>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#specialties" class="active">Specialties</a></li>
+      <li><a href="#doctors">Doctors</a></li>
+      <li><a href="#book">Book</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+      <li id="authNav"></li>
+      <li><a href="#book" class="btn btn-primary">Book Now</a></li>
+    </ul>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+</header>
+
+<!-- ─── HERO ───────────────────────────────────────── -->
+<section style="padding: 0;">
+  <div class="hero">
+    <div class="hero-text">
+      <div class="hero-tag">Trusted Healthcare Platform</div>
+      <h1>Your health,<br/><em>expertly</em> cared for.</h1>
+      <p>Book appointments with top-rated doctors in seconds. Choose your specialty, pick a slot, and get quality care — all in one place.</p>
+      <div class="hero-ctas">
+        <a href="#book" class="btn btn-primary">📅 Book Appointment</a>
+        <a href="#doctors" class="btn btn-outline">Meet Our Doctors</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card">
+        <div class="hero-card-header">
+          <h3>Today's Availability</h3>
+          <span class="badge badge-green">● Live</span>
+        </div>
+        <div class="doctor-list">
+          <div class="doctor-item" onclick="scrollToBook('Dr. Priya Sharma', 'Cardiologist')">
+            <div class="doctor-avatar" style="background:#e8f5f3;">🫀</div>
+            <div class="doctor-info">
+              <strong>Dr. Priya Sharma</strong>
+              <span>Cardiologist</span>
+            </div>
+            <div class="doctor-slots">3 slots</div>
+          </div>
+          <div class="doctor-item" onclick="scrollToBook('Dr. Rahul Mehta', 'Neurologist')">
+            <div class="doctor-avatar" style="background:#fff3e0;">🧠</div>
+            <div class="doctor-info">
+              <strong>Dr. Rahul Mehta</strong>
+              <span>Neurologist</span>
+            </div>
+            <div class="doctor-slots">5 slots</div>
+          </div>
+          <div class="doctor-item" onclick="scrollToBook('Dr. Ananya Nair', 'Dermatologist')">
+            <div class="doctor-avatar" style="background:#fce4ec;">🩺</div>
+            <div class="doctor-info">
+              <strong>Dr. Ananya Nair</strong>
+              <span>Dermatologist</span>
+            </div>
+            <div class="doctor-slots">2 slots</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STATS ───────────────────────────────────────── -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item"><h3>120+</h3><p>Expert Doctors</p></div>
+    <div class="stat-item"><h3>50K+</h3><p>Happy Patients</p></div>
+    <div class="stat-item"><h3>18</h3><p>Specialties</p></div>
+    <div class="stat-item"><h3>4.9★</h3><p>Average Rating</p></div>
+  </div>
+</div>
+
+<!-- ─── SPECIALTIES ─────────────────────────────────── -->
+<section id="specialties">
+  <div class="section-inner">
+    <div class="section-label">Browse by Category</div>
+    <h2 class="section-title">Our Specialties</h2>
+    <p class="section-sub">Find the right specialist for your needs. Click any card to jump to booking.</p>
+    <div class="specialties-grid" id="specialtiesGrid">
+      <div class="specialty-card" onclick="selectSpecialty(this, 'Cardiology')">
+        <div class="specialty-icon">🫀</div>
+        <h4>Cardiology</h4>
+        <p>Heart & vessels</p>
+      </div>
+      <div class="specialty-card" onclick="selectSpecialty(this, 'Neurology')">
+        <div class="specialty-icon">🧠</div>
+        <h4>Neurology</h4>
+        <p>Brain & nerves</p>
+      </div>
+      <div class="specialty-card" onclick="selectSpecialty(this, 'Dermatology')">
+        <div class="specialty-icon">🩺</div>
+        <h4>Dermatology</h4>
+        <p>Skin & hair</p>
+      </div>
+      <div class="specialty-card" onclick="selectSpecialty(this, 'Orthopedics')">
+        <div class="specialty-icon">🦴</div>
+        <h4>Orthopedics</h4>
+        <p>Bones & joints</p>
+      </div>
+      <div class="specialty-card" onclick="selectSpecialty(this, 'Pediatrics')">
+        <div class="specialty-icon">👶</div>
+        <h4>Pediatrics</h4>
+        <p>Child health</p>
+      </div>
+      <div class="specialty-card" onclick="selectSpecialty(this, 'Ophthalmology')">
+        <div class="specialty-icon">👁️</div>
+        <h4>Ophthalmology</h4>
+        <p>Eyes & vision</p>
+      </div>
+      <div class="specialty-card" onclick="selectSpecialty(this, 'Psychiatry')">
+        <div class="specialty-icon">🧘</div>
+        <h4>Psychiatry</h4>
+        <p>Mental health</p>
+      </div>
+      <div class="specialty-card" onclick="selectSpecialty(this, 'General Medicine')">
+        <div class="specialty-icon">💊</div>
+        <h4>General</h4>
+        <p>General medicine</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DOCTORS ──────────────────────────────────────── -->
+<section id="doctors">
+  <div class="section-inner">
+    <div class="section-label">Our Team</div>
+    <h2 class="section-title">Meet the Doctors</h2>
+    <p class="section-sub">All our doctors are board-certified with years of clinical experience.</p>
+    <div class="doctors-grid">
+      <div class="doc-card">
+        <div class="doc-card-top">
+          <div class="doc-avatar-lg">🫀</div>
+          <h3>Dr. Priya Sharma</h3>
+          <p>Cardiologist</p>
+        </div>
+        <div class="doc-card-body">
+          <div class="doc-meta">
+            <div class="doc-meta-item"><strong>12 yrs</strong><span>Experience</span></div>
+            <div class="doc-meta-item"><strong>1.2K+</strong><span>Patients</span></div>
+            <div class="doc-meta-item"><strong>₹800</strong><span>Per Visit</span></div>
+          </div>
+          <div class="doc-rating">
+            <span class="stars">★★★★★</span>
+            <span>4.9 (312 reviews)</span>
+          </div>
+          <button class="btn-book" onclick="scrollToBook('Dr. Priya Sharma', 'Cardiology')">Book Appointment</button>
+        </div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-card-top">
+          <div class="doc-avatar-lg">🧠</div>
+          <h3>Dr. Rahul Mehta</h3>
+          <p>Neurologist</p>
+        </div>
+        <div class="doc-card-body">
+          <div class="doc-meta">
+            <div class="doc-meta-item"><strong>9 yrs</strong><span>Experience</span></div>
+            <div class="doc-meta-item"><strong>890+</strong><span>Patients</span></div>
+            <div class="doc-meta-item"><strong>₹950</strong><span>Per Visit</span></div>
+          </div>
+          <div class="doc-rating">
+            <span class="stars">★★★★★</span>
+            <span>4.8 (204 reviews)</span>
+          </div>
+          <button class="btn-book" onclick="scrollToBook('Dr. Rahul Mehta', 'Neurology')">Book Appointment</button>
+        </div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-card-top">
+          <div class="doc-avatar-lg">🩺</div>
+          <h3>Dr. Ananya Nair</h3>
+          <p>Dermatologist</p>
+        </div>
+        <div class="doc-card-body">
+          <div class="doc-meta">
+            <div class="doc-meta-item"><strong>7 yrs</strong><span>Experience</span></div>
+            <div class="doc-meta-item"><strong>740+</strong><span>Patients</span></div>
+            <div class="doc-meta-item"><strong>₹700</strong><span>Per Visit</span></div>
+          </div>
+          <div class="doc-rating">
+            <span class="stars">★★★★★</span>
+            <span>4.9 (178 reviews)</span>
+          </div>
+          <button class="btn-book" onclick="scrollToBook('Dr. Ananya Nair', 'Dermatology')">Book Appointment</button>
+        </div>
+      </div>
+      <div class="doc-card">
+        <div class="doc-card-top">
+          <div class="doc-avatar-lg">🦴</div>
+          <h3>Dr. Arvind Patel</h3>
+          <p>Orthopedic Surgeon</p>
+        </div>
+        <div class="doc-card-body">
+          <div class="doc-meta">
+            <div class="doc-meta-item"><strong>15 yrs</strong><span>Experience</span></div>
+            <div class="doc-meta-item"><strong>2K+</strong><span>Patients</span></div>
+            <div class="doc-meta-item"><strong>₹1100</strong><span>Per Visit</span></div>
+          </div>
+          <div class="doc-rating">
+            <span class="stars">★★★★★</span>
+            <span>4.7 (419 reviews)</span>
+          </div>
+          <button class="btn-book" onclick="scrollToBook('Dr. Arvind Patel', 'Orthopedics')">Book Appointment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── BOOKING FORM ─────────────────────────────────── -->
+<section id="book">
+  <div class="section-inner">
+    <div class="booking-layout">
+      <div class="booking-info">
+        <div class="section-label">Easy Booking</div>
+        <h2 class="section-title">Book Your Appointment</h2>
+        <p class="section-sub">Fill in the form and we'll confirm your appointment within minutes.</p>
+        <div class="booking-steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Choose a Specialty</strong>
+              <span>Select from 18+ medical specialties</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Pick a Doctor & Slot</strong>
+              <span>View availability and select your preferred time</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Confirm & Attend</strong>
+              <span>Get SMS/email confirmation and visit the clinic</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="booking-form">
+        <h3>📋 Appointment Details</h3>
+        <form id="appointmentForm" novalidate onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="firstName">First Name *</label>
+              <input type="text" id="firstName" placeholder="Aarav"/>
+              <div class="error-msg" id="firstNameErr">Please enter your first name.</div>
+            </div>
+            <div class="form-group">
+              <label for="lastName">Last Name *</label>
+              <input type="text" id="lastName" placeholder="Kumar"/>
+              <div class="error-msg" id="lastNameErr">Please enter your last name.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" placeholder="aarav@email.com"/>
+            <div class="error-msg" id="emailErr">Please enter a valid email address.</div>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone Number *</label>
+            <input type="tel" id="phone" placeholder="+91 98765 43210"/>
+            <div class="error-msg" id="phoneErr">Please enter a valid 10-digit phone number.</div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="specialty">Specialty *</label>
+              <select id="specialty">
+                <option value="">Select specialty</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Dermatology">Dermatology</option>
+                <option value="Orthopedics">Orthopedics</option>
+                <option value="Pediatrics">Pediatrics</option>
+                <option value="Ophthalmology">Ophthalmology</option>
+                <option value="Psychiatry">Psychiatry</option>
+                <option value="General Medicine">General Medicine</option>
+              </select>
+              <div class="error-msg" id="specialtyErr">Please select a specialty.</div>
+            </div>
+            <div class="form-group">
+              <label for="doctor">Preferred Doctor</label>
+              <select id="doctor">
+                <option value="">Any available</option>
+                <option value="Dr. Priya Sharma">Dr. Priya Sharma</option>
+                <option value="Dr. Rahul Mehta">Dr. Rahul Mehta</option>
+                <option value="Dr. Ananya Nair">Dr. Ananya Nair</option>
+                <option value="Dr. Arvind Patel">Dr. Arvind Patel</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="date">Preferred Date *</label>
+              <input type="date" id="date"/>
+              <div class="error-msg" id="dateErr">Please select a future date.</div>
+            </div>
+            <div class="form-group">
+              <label for="time">Preferred Time *</label>
+              <select id="time">
+                <option value="">Select time</option>
+                <option>09:00 AM</option>
+                <option>10:00 AM</option>
+                <option>11:00 AM</option>
+                <option>12:00 PM</option>
+                <option>02:00 PM</option>
+                <option>03:00 PM</option>
+                <option>04:00 PM</option>
+                <option>05:00 PM</option>
+              </select>
+              <div class="error-msg" id="timeErr">Please select a time slot.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="notes">Symptoms / Notes</label>
+            <textarea id="notes" placeholder="Briefly describe your symptoms or reason for visit..."></textarea>
+          </div>
+          <button type="submit" class="form-submit">✓ Confirm Appointment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─────────────────────────────────── -->
+<section id="testimonials">
+  <div class="section-inner">
+    <div class="section-label">Patient Reviews</div>
+    <h2 class="section-title">What patients say</h2>
+    <p class="section-sub">Real stories from people we've helped.</p>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p class="testimonial-text">Booking was incredibly smooth. Got a confirmed slot within 2 minutes and the doctor was absolutely brilliant. Couldn't ask for more.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👩</div>
+          <div class="author-info">
+            <strong>Meera Iyer</strong>
+            <span>Cardiology patient ★★★★★</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">The platform is so clean and easy to use. Dr. Mehta was incredibly thorough and explained everything clearly. Highly recommend.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👨</div>
+          <div class="author-info">
+            <strong>Rohan Desai</strong>
+            <span>Neurology patient ★★★★★</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">Got a same-day appointment for my child. The pediatrician was so patient and caring. MediCare is now my go-to for all family healthcare.</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">👩</div>
+          <div class="author-info">
+            <strong>Sunita Rao</strong>
+            <span>Pediatrics patient ★★★★★</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ───────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo" style="color:white; margin-bottom:14px;">
+          <div class="logo-icon">✦</div>
+          Medi<span>Care</span>
+        </div>
+        <p>Your trusted healthcare booking platform, connecting patients with the best doctors across all specialties.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Specialties</h4>
+        <ul>
+          <li><a href="#book">Cardiology</a></li>
+          <li><a href="#book">Neurology</a></li>
+          <li><a href="#book">Dermatology</a></li>
+          <li><a href="#book">Orthopedics</a></li>
+          <li><a href="#book">Pediatrics</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#specialties">Specialties</a></li>
+          <li><a href="#doctors">Doctors</a></li>
+          <li><a href="#book">Book Now</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">📞 1800-MED-CARE</a></li>
+          <li><a href="#">✉ hello@medicare.in</a></li>
+          <li><a href="#">📍 Bengaluru, KA</a></li>
+          <li><a href="#">🕘 Mon–Sat 9AM–6PM</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 MediCare. All rights reserved.</span>
+      <span>Made with ❤️ for better healthcare access</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── MODAL ─────────────────────────────────────────── -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="modal-icon">🎉</div>
+    <h2>Appointment Booked!</h2>
+    <p id="modalMsg">Your appointment has been confirmed. You'll receive a confirmation SMS and email shortly.</p>
+    <button class="modal-close" onclick="closeModal()">Done</button>
+  </div>
+</div>
+
+<!-- ─── TOAST ─────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <div class="toast-icon">✅</div>
+  <div>
+    <strong>Appointment Confirmed!</strong>
+    <span id="toastMsg">Booking details sent to your email.</span>
+  </div>
+</div>
+
+<!-- ─── SCROLL TO TOP ─────────────────────────────────── -->
+<button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- ─── JAVASCRIPT ────────────────────────────────────── -->
+<script>
+  // ─── API Configuration ─────────────────────────────
+  const API_BASE = 'http://localhost:5002';
+  let doctorsData = []; // Store fetched doctors
+
+  // Set min date for date input to today
+  const dateInput = document.getElementById('date');
+  const today = new Date().toISOString().split('T')[0];
+  dateInput.setAttribute('min', today);
+
+  // ── Auth Nav ──
+  (function updateAuthNav() {
+    const token = localStorage.getItem('medicare_token');
+    const user = JSON.parse(localStorage.getItem('medicare_user') || '{}');
+    const authNav = document.getElementById('authNav');
+    if (token && user.name) {
+      const dashLink = user.role === 'admin' ? 'admin-dashboard.html' : user.role === 'doctor' ? 'doctor-dashboard.html' : 'patient-dashboard.html';
+      authNav.innerHTML = `<a href="${dashLink}" style="color:var(--teal);font-weight:600">👤 ${user.name || user.doctorName}</a>`;
+    } else {
+      authNav.innerHTML = '<a href="login.html">Login</a>';
+    }
+  })();
+
+  // ── Load Doctors from API ──
+  async function loadDoctorsFromAPI() {
+    try {
+      const res = await fetch(API_BASE + '/api/doctors');
+      const data = await res.json();
+      if (data.success && data.data.length > 0) {
+        doctorsData = data.data;
+        renderDoctorCards(data.data);
+        updateDoctorSelect(data.data);
+      }
+    } catch(e) { console.log('API not available, using static data'); }
+  }
+
+  function renderDoctorCards(doctors) {
+    const grid = document.querySelector('.doctors-grid');
+    grid.innerHTML = doctors.map(d => `
+      <div class="doc-card">
+        <div class="doc-card-top">
+          <div class="doc-avatar-lg">${d.emoji || '🩺'}</div>
+          <h3>${d.doctorName}</h3>
+          <p>${d.specialty}</p>
+        </div>
+        <div class="doc-card-body">
+          <div class="doc-meta">
+            <div class="doc-meta-item"><strong>${d.experience} yrs</strong><span>Experience</span></div>
+            <div class="doc-meta-item"><strong>${d.totalPatients >= 1000 ? (d.totalPatients/1000).toFixed(1)+'K+' : d.totalPatients+'+'}</strong><span>Patients</span></div>
+            <div class="doc-meta-item"><strong>₹${d.consultationFee}</strong><span>Per Visit</span></div>
+          </div>
+          <div class="doc-rating">
+            <span class="stars">${'★'.repeat(Math.round(d.rating))}${'☆'.repeat(5-Math.round(d.rating))}</span>
+            <span>${d.rating} (${d.totalReviews} reviews)</span>
+          </div>
+          <button class="btn-book" onclick="scrollToBook('${d.doctorName}', '${d.specialty}', '${d._id}')">Book Appointment</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function updateDoctorSelect(doctors) {
+    const sel = document.getElementById('doctor');
+    sel.innerHTML = '<option value="">Any available</option>' +
+      doctors.map(d => `<option value="${d.doctorName}" data-id="${d._id}">${d.doctorName} – ${d.specialty}</option>`).join('');
+  }
+
+  // ── Nav active state on scroll ──
+  const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+  const sections = document.querySelectorAll('section[id], div[id]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === '#' + current) link.classList.add('active');
+    });
+    document.getElementById('scrollTopBtn').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // ── Hamburger menu ──
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  // ── Specialty card click → prefill form ──
+  function selectSpecialty(card, name) {
+    document.querySelectorAll('.specialty-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    document.getElementById('specialty').value = name;
+    document.getElementById('book').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── Doctor card click → prefill form ──
+  let selectedDoctorId = null;
+  function scrollToBook(doctorName, specialty, doctorId) {
+    if (doctorName) document.getElementById('doctor').value = doctorName;
+    if (specialty) document.getElementById('specialty').value = specialty;
+    if (doctorId) selectedDoctorId = doctorId;
+    document.getElementById('book').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── Form Validation & Backend Submission ──
+  async function handleSubmit(e) {
+    e.preventDefault();
+    let valid = true;
+
+    function validate(id, errId, condition) {
+      const el = document.getElementById(id);
+      const err = document.getElementById(errId);
+      if (!condition(el.value)) {
+        el.classList.add('error');
+        err.classList.add('visible');
+        valid = false;
+      } else {
+        el.classList.remove('error');
+        err.classList.remove('visible');
+      }
+    }
+
+    validate('firstName', 'firstNameErr', v => v.trim().length >= 2);
+    validate('lastName',  'lastNameErr',  v => v.trim().length >= 2);
+    validate('email',     'emailErr',     v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v));
+    validate('phone',     'phoneErr',     v => /^[6-9]\d{9}$/.test(v.replace(/\D/g,'')));
+    validate('specialty', 'specialtyErr', v => v !== '');
+    validate('date',      'dateErr',      v => v !== '' && v >= today);
+    validate('time',      'timeErr',      v => v !== '');
+
+    if (!valid) return;
+
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const doctorName = document.getElementById('doctor').value || 'Any Available Doctor';
+    const selOption = document.getElementById('doctor').selectedOptions[0];
+    const doctorId = selOption ? selOption.getAttribute('data-id') : selectedDoctorId;
+
+    const submitBtn = document.querySelector('.form-submit');
+    submitBtn.textContent = '⏳ Booking...';
+    submitBtn.disabled = true;
+
+    try {
+      const token = localStorage.getItem('medicare_token');
+      const reqHeaders = { 'Content-Type': 'application/json' };
+      if (token) reqHeaders['Authorization'] = 'Bearer ' + token;
+
+      const res = await fetch(API_BASE + '/api/appointments', {
+        method: 'POST',
+        headers: reqHeaders,
+        body: JSON.stringify({
+          patientName: firstName + ' ' + lastName,
+          patientEmail: document.getElementById('email').value,
+          patientPhone: document.getElementById('phone').value.replace(/\D/g,''),
+          doctorName: doctorName,
+          doctorId: doctorId || null,
+          specialty: document.getElementById('specialty').value,
+          appointmentDate: document.getElementById('date').value,
+          appointmentTime: document.getElementById('time').value,
+          symptoms: document.getElementById('notes').value
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        const appt = data.data;
+        document.getElementById('modalMsg').textContent =
+          `Hi ${firstName}! Your ${appt.specialty} appointment with ${appt.doctorName} on ${new Date(appt.appointmentDate).toLocaleDateString('en-IN')} at ${appt.appointmentTime} is confirmed. Booking ID: ${appt.bookingId}`;
+        document.getElementById('successModal').classList.add('open');
+        document.getElementById('appointmentForm').reset();
+        selectedDoctorId = null;
+      } else {
+        showToast(data.message || 'Booking failed. Please try again.');
+      }
+    } catch(err) {
+      // Fallback to static behavior if API is not running
+      document.getElementById('modalMsg').textContent =
+        `Hi ${firstName}! Your appointment with ${doctorName} has been submitted. A confirmation will be sent shortly.`;
+      document.getElementById('successModal').classList.add('open');
+      document.getElementById('appointmentForm').reset();
+    } finally {
+      submitBtn.textContent = '✓ Confirm Appointment';
+      submitBtn.disabled = false;
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('successModal').classList.remove('open');
+    showToast('Booking confirmed! Check your email for details.');
+  }
+
+  // ── Toast ──
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+
+  // ── Close modal on overlay click ──
+  document.getElementById('successModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ── Animate stat numbers on scroll ──
+  const statNumbers = [
+    { el: document.querySelectorAll('.stat-item h3')[0], target: 120, suffix: '+' },
+    { el: document.querySelectorAll('.stat-item h3')[1], target: 50,  suffix: 'K+' },
+    { el: document.querySelectorAll('.stat-item h3')[2], target: 18,  suffix: '' },
+    { el: document.querySelectorAll('.stat-item h3')[3], target: 4.9, suffix: '★', isFloat: true },
+  ];
+  let animated = false;
+  const statsBar = document.querySelector('.stats-bar');
+  const observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting && !animated) {
+      animated = true;
+      statNumbers.forEach(({ el, target, suffix, isFloat }) => {
+        let current = 0;
+        const step = target / 40;
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) { current = target; clearInterval(timer); }
+          el.textContent = (isFloat ? current.toFixed(1) : Math.floor(current)) + suffix;
+        }, 30);
+      });
+    }
+  }, { threshold: 0.5 });
+  observer.observe(statsBar);
+
+  // ── Load doctors from API on page load ──
+  loadDoctorsFromAPI();
+</script>
+</body>
+</html>

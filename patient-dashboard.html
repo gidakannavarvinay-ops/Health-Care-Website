@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patient Dashboard – MediCare</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--bg:#f7f6f2;--white:#fff;--navy:#1a2e44;--teal:#2a9d8f;--teal-light:#e8f5f3;--accent:#e76f51;--muted:#8a9ab0;--border:#e2e5ea;--text:#2b3a4d;--radius:14px;--transition:.25s cubic-bezier(.4,0,.2,1)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
+    .dash-header{background:var(--white);border-bottom:1px solid var(--border);padding:0 5%;position:sticky;top:0;z-index:50}
+    .dash-nav{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px}
+    .logo{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:600;color:var(--navy)}
+    .logo span{color:var(--teal)}
+    .dash-nav-links{display:flex;gap:20px;align-items:center}
+    .dash-nav-links a{font-size:.85rem;color:var(--muted);text-decoration:none;transition:color var(--transition)}
+    .dash-nav-links a:hover{color:var(--teal)}
+    .user-badge{display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--teal-light);border-radius:50px;font-size:.85rem;color:var(--teal);font-weight:500}
+    .container{max-width:1200px;margin:0 auto;padding:28px 5%}
+    .welcome-banner{background:linear-gradient(135deg,var(--teal),#238a7d);border-radius:var(--radius);padding:32px;color:#fff;margin-bottom:28px;display:flex;justify-content:space-between;align-items:center}
+    .welcome-banner h1{font-family:'Fraunces',serif;font-size:1.5rem;margin-bottom:6px}
+    .welcome-banner p{opacity:.85;font-size:.9rem}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;border:none;transition:all var(--transition);text-decoration:none}
+    .btn-white{background:#fff;color:var(--teal)}
+    .btn-white:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,.15)}
+    .btn-primary{background:var(--teal);color:#fff}
+    .btn-primary:hover{background:#238a7d}
+    .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text)}
+    .btn-sm{padding:7px 14px;font-size:.8rem}
+    .btn-danger{background:#e63946;color:#fff;padding:6px 12px;font-size:.78rem;border:none;border-radius:6px;cursor:pointer}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+    .mini-stat{background:var(--white);border-radius:var(--radius);padding:20px;box-shadow:0 2px 12px rgba(26,46,68,.05);text-align:center}
+    .mini-stat .num{font-family:'Fraunces',serif;font-size:1.8rem;color:var(--teal);margin-bottom:4px}
+    .mini-stat p{font-size:.82rem;color:var(--muted)}
+    .card{background:var(--white);border-radius:var(--radius);padding:24px;box-shadow:0 2px 12px rgba(26,46,68,.05);margin-bottom:20px}
+    .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    .card-header h2{font-family:'Fraunces',serif;font-size:1.1rem;color:var(--navy)}
+    .appt-card{display:flex;align-items:center;gap:16px;padding:16px;border-radius:10px;background:var(--bg);margin-bottom:10px;transition:all var(--transition)}
+    .appt-card:hover{background:var(--teal-light)}
+    .appt-icon{width:46px;height:46px;border-radius:12px;background:var(--teal-light);color:var(--teal);display:grid;place-items:center;font-size:1.3rem;flex-shrink:0}
+    .appt-info{flex:1}
+    .appt-info h4{font-size:.92rem;color:var(--navy);margin-bottom:2px}
+    .appt-info p{font-size:.8rem;color:var(--muted)}
+    .appt-actions{display:flex;gap:6px;align-items:center}
+    .badge{padding:4px 10px;border-radius:50px;font-size:.72rem;font-weight:600}
+    .badge-green{background:#d4edda;color:#1a7a34}
+    .badge-orange{background:#ffe5d9;color:#c0432a}
+    .badge-blue{background:#d6eaf8;color:#1a5276}
+    .badge-red{background:#fce4ec;color:#c0392b}
+    .empty-state{text-align:center;padding:40px;color:var(--muted)}
+    .empty-state .icon{font-size:2.5rem;margin-bottom:10px}
+    .toast{position:fixed;bottom:30px;right:30px;background:var(--navy);color:#fff;padding:16px 22px;border-radius:12px;font-size:.9rem;box-shadow:0 8px 30px rgba(0,0,0,.2);transform:translateY(100px);opacity:0;transition:all .4s;z-index:999}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.success{background:#1a7a34}
+    .toast.error{background:#e63946}
+    @media(max-width:768px){.grid-3{grid-template-columns:1fr}.welcome-banner{flex-direction:column;gap:16px;text-align:center}}
+  </style>
+</head>
+<body>
+<header class="dash-header">
+  <nav class="dash-nav">
+    <div class="logo">✦ Medi<span>Care</span></div>
+    <div class="dash-nav-links">
+      <a href="healthcare-booking.html">Home</a>
+      <a href="healthcare-booking.html#book">Book Now</a>
+      <div class="user-badge" id="userBadge">👤 Patient</div>
+      <a href="#" onclick="logout()" style="color:#e63946">Logout</a>
+    </div>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="welcome-banner">
+    <div><h1 id="welcomeMsg">Welcome back!</h1><p>Here's your appointment overview</p></div>
+    <a href="healthcare-booking.html#book" class="btn btn-white">📅 Book New Appointment</a>
+  </div>
+
+  <div class="grid-3">
+    <div class="mini-stat"><div class="num" id="totalBookings">0</div><p>Total Bookings</p></div>
+    <div class="mini-stat"><div class="num" id="upcomingCount">0</div><p>Upcoming</p></div>
+    <div class="mini-stat"><div class="num" id="completedCount">0</div><p>Completed</p></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>📅 Upcoming Appointments</h2></div>
+    <div id="upcomingList"><div class="empty-state"><div class="icon">📋</div><p>Loading...</p></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>📜 Past Appointments</h2></div>
+    <div id="pastList"><div class="empty-state"><div class="icon">📋</div><p>Loading...</p></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:5002';
+const token = localStorage.getItem('medicare_token');
+const user = JSON.parse(localStorage.getItem('medicare_user') || '{}');
+
+if (!token || (user.role !== 'patient' && user.role !== 'admin')) { window.location.href = 'login.html'; }
+
+document.getElementById('welcomeMsg').textContent = 'Welcome back, ' + (user.name || 'Patient') + '!';
+document.getElementById('userBadge').textContent = '👤 ' + (user.name || 'Patient');
+
+const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+
+async function loadDashboard() {
+  try {
+    const res = await fetch(API + '/api/users/dashboard', { headers });
+    const data = await res.json();
+    if (!data.success) return;
+
+    const { upcoming, past, totalBookings } = data.data;
+    document.getElementById('totalBookings').textContent = totalBookings;
+    document.getElementById('upcomingCount').textContent = upcoming.length;
+    document.getElementById('completedCount').textContent = past.filter(a => a.status === 'completed').length;
+
+    const statusBadge = s => s === 'completed' ? 'badge-green' : s === 'pending' ? 'badge-orange' : s === 'confirmed' ? 'badge-blue' : 'badge-red';
+
+    if (upcoming.length > 0) {
+      document.getElementById('upcomingList').innerHTML = upcoming.map(a => `
+        <div class="appt-card">
+          <div class="appt-icon">🩺</div>
+          <div class="appt-info">
+            <h4>${a.doctorName} – ${a.specialty}</h4>
+            <p>${new Date(a.appointmentDate).toLocaleDateString('en-IN',{weekday:'short',month:'short',day:'numeric'})} at ${a.appointmentTime} · ${a.bookingId}</p>
+          </div>
+          <div class="appt-actions">
+            <span class="badge ${statusBadge(a.status)}">${a.status}</span>
+            <button class="btn-danger" onclick="cancelAppt('${a._id}')">Cancel</button>
+          </div>
+        </div>
+      `).join('');
+    } else {
+      document.getElementById('upcomingList').innerHTML = '<div class="empty-state"><div class="icon">📅</div><p>No upcoming appointments. <a href="healthcare-booking.html#book" style="color:var(--teal)">Book one now!</a></p></div>';
+    }
+
+    if (past.length > 0) {
+      document.getElementById('pastList').innerHTML = past.map(a => `
+        <div class="appt-card">
+          <div class="appt-icon" style="background:${a.status==='completed'?'#d4edda':'#fce4ec'};color:${a.status==='completed'?'#1a7a34':'#c0392b'}">${a.status==='completed'?'✓':'✕'}</div>
+          <div class="appt-info">
+            <h4>${a.doctorName} – ${a.specialty}</h4>
+            <p>${new Date(a.appointmentDate).toLocaleDateString('en-IN')} at ${a.appointmentTime}</p>
+          </div>
+          <span class="badge ${statusBadge(a.status)}">${a.status}</span>
+        </div>
+      `).join('');
+    } else {
+      document.getElementById('pastList').innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>No past appointments</p></div>';
+    }
+  } catch(e) { showToast('Error loading dashboard', 'error'); }
+}
+
+async function cancelAppt(id) {
+  if (!confirm('Are you sure you want to cancel this appointment?')) return;
+  try {
+    const res = await fetch(API + '/api/appointments/' + id + '/cancel', { method: 'PUT', headers, body: JSON.stringify({ reason: 'Cancelled by patient' }) });
+    const data = await res.json();
+    showToast(data.message, data.success ? 'success' : 'error');
+    loadDashboard();
+  } catch(e) { showToast('Error cancelling appointment', 'error'); }
+}
+
+function logout() { localStorage.removeItem('medicare_token'); localStorage.removeItem('medicare_user'); window.location.href = 'login.html'; }
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast'); t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+loadDashboard();
+</script>
+</body>
+</html>
