@@ -52,8 +52,8 @@ app.use(mongoSanitize());
 // ─── Static Files ───────────────────────────────────
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve frontend files from parent directory
-app.use(express.static(path.join(__dirname, '..')));
+// Serve frontend files from public directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ─── API Routes ─────────────────────────────────────
 app.use('/api/auth', require('./routes/authRoutes'));
@@ -75,23 +75,23 @@ app.get('/api/health', (req, res) => {
 
 // ─── Serve Frontend Pages ───────────────────────────
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'admin-dashboard.html'));
+  res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
 });
 
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'login.html'));
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
 app.get('/register', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'register.html'));
+  res.sendFile(path.join(__dirname, 'public', 'register.html'));
 });
 
 app.get('/patient-dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'patient-dashboard.html'));
+  res.sendFile(path.join(__dirname, 'public', 'patient-dashboard.html'));
 });
 
 app.get('/doctor-dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'doctor-dashboard.html'));
+  res.sendFile(path.join(__dirname, 'public', 'doctor-dashboard.html'));
 });
 
 // ─── Error Handling ─────────────────────────────────
